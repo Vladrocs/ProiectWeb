@@ -1,0 +1,186 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+html,body{
+    height:100%;
+    width: 100%;
+}
+#form_container{
+    position: relative;
+    width: 30%;
+    height: 90%;
+    left: 65%;
+    top: 5%;
+    border: 1px solid black;
+}
+.div_username{
+    position: relative;
+    display: block;
+    margin: auto;
+    margin-top: 30%;
+    width: 40%;
+    /*height: 5vh;*/
+    border-bottom: 1px solid black;
+}
+#username{
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+.label_login{
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width:100%;
+    height:100%;
+    pointer-events: none;
+}
+.span_login{
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    font-size: 10px;
+    transition: all 0.3s ease;
+}
+.div_password{
+    position: relative;
+    display: block;
+    margin: auto;
+    margin-top: 30px;
+    width: 40%;
+    border-bottom: 1px solid black;
+}
+#password{
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+.div_mail{
+    position: relative;
+    display: block;
+    margin: auto;
+    margin-top: 30px;
+    width: 40%;
+    border-bottom: 1px solid black;
+}
+#mail{
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+#form_container .div_username input:focus + .label_login .span_login, 
+#form_container .div_username input:valid + .label_login .span_login{ 
+    transform: translateY(-200%);
+}
+#form_container .div_password input:focus + .label_login .span_login, 
+#form_container .div_password input:valid + .label_login .span_login{ 
+    transform: translateY(-200%);
+}
+#form_container .div_mail input:focus + .label_login .span_login, 
+#form_container .div_mail input:valid + .label_login .span_login{ 
+    transform: translateY(-200%);
+}
+.div_inregistrare{
+    position: relative;
+    margin: auto;
+    display: flex;
+    margin-top: 30px;
+    justify-content: center;
+}
+.button{
+    background-color: blue;
+    color: white;
+    text-decoration: none;
+    padding: 10px 30px;
+    border: none;
+    text-align: center;
+}
+
+@media screen and (min-width: 600px) and (max-width: 800px){
+
+    #form_container{
+        position: relative;
+        width: 50%;
+        height: 90%;
+        left: 50%;
+        transform:translateX(-50%);
+        top: 5%;
+        border: 1px solid black;
+    }
+    .div_username{
+        margin-top: 30%;
+        width: 40%;
+        /*height: 5vh;*/
+        height: 30px;
+        border-bottom: 1px solid black;
+    }
+    .div_password{
+        margin-top: 30px;
+        width: 40%;
+        height: 30px;
+        border-bottom: 1px solid black;
+    }
+    .div_mail{
+        position: relative;
+        display: block;
+        margin: auto;
+        margin-top: 30px;
+        width: 40%;
+        border-bottom: 1px solid black;
+    }
+    #form_container .div_username input:focus + .label_login .span_login, 
+    #form_container .div_username input:valid + .label_login .span_login{ 
+        transform: translateY(-200%);
+    }
+    #form_container .div_password input:focus + .label_login .span_login, 
+    #form_container .div_password input:valid + .label_login .span_login{ 
+        transform: translateY(-200%);
+    }
+    #form_container .div_mail input:focus + .label_login .span_login, 
+    #form_container .div_mail input:valid + .label_login .span_login{ 
+        transform: translateY(-200%);
+}
+}
+@media screen and (max-width: 600px){
+    #form_container{
+        position: relative;
+        width: 100%;
+        height: 100%;
+        left: 0%;
+        top: 0%;
+        border: 1px solid black;
+    }
+    .div_username{
+        margin-top: 30%;
+        width: 40%;
+        /*height: 5vh;*/
+        height: 30px;
+        border-bottom: 1px solid black;
+    }
+    .div_password{
+        margin-top: 30px;
+        width: 40%;
+        height: 30px;
+        border-bottom: 1px solid black;
+    }
+    .div_mail{
+        margin-top: 30px;
+        width: 40%;
+        height: 30px;
+        border-bottom: 1px solid black;
+    }
+    #form_container .div_username input:focus + .label_login .span_login, 
+    #form_container .div_username input:valid + .label_login .span_login{ 
+        transform: translateY(-200%);
+    }
+    #form_container .div_password input:focus + .label_login .span_login, 
+    #form_container .div_password input:valid + .label_login .span_login{ 
+        transform: translateY(-200%);
+    }
+    #form_container .div_mail input:focus + .label_login .span_login, 
+    #form_container .div_mail input:valid + .label_login .span_login{ 
+        transform: translateY(-200%);
+}
+}
