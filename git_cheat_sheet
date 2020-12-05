@@ -1,0 +1,8 @@
+#arata modificarile facute
+git status
+#adaugă toate modificările din locatia curenta la următorul commit
+git add .
+#commit
+git commit -m "comit message"
+#push the commit to the server
+git push
