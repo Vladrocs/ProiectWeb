@@ -13,7 +13,8 @@ const client = new MongoClient(uri,{useNewUrlParser: true},function (err, db) {}
 
 app.use(session({
 	secret: 'secret',
-	resave: true,
+  resave: true,
+  cookie: { maxAge: 8*60*60*1000 },
 	saveUninitialized: true
 }));
 
@@ -40,24 +41,24 @@ app.post('/login', function(req, res){
     var variables =  qs.parse(body);
     console.log(variables);
     MongoClient.connect(uri, function(err, db) {
-    var dbc = db.db("messenger");
-    obj={username: variables.username, password: variables.password};
-    dbc.collection("conturi").find(obj).toArray(function(err, result) {
-      if (err)
-        throw err;
-      if(result.length==0){
-        console.log("credentiale gresite");
-        //de trimis var la user pt cred inv
-        return res.redirect("/");
-      }else{
-        console.log("cred vaide");
-        req.session.username=variables.username;
-        return res.redirect("/home")
-      }      
+      var dbc = db.db("messenger");
+      obj={username: variables.username, password: variables.password};
+      dbc.collection("conturi").find(obj).toArray(function(err, result) {
+        if (err)
+          throw err;
+        if(result.length==0){
+          console.log("credentiale gresite");
+          //de trimis var la user pt cred inv
+          return res.redirect("/");
+        }else{
+          console.log("cred vaide");
+          req.session.username=variables.username;
+          return res.redirect("/home")
+        }      
+      });
+      db.close();
     });
-    db.close();
   });
- });
 });
 
 app.get('/home', function(req, res){
@@ -104,6 +105,29 @@ app.get("/log_out",(req, res)=>{
   req.session.destroy();
  // console.log(req.session);
   return res.redirect("/");
+});
+
+app.get("/get_users",(req, res)=>{
+  MongoClient.connect(uri, function(err, db) {
+    var dbc = db.db("messenger");
+    ////////////////////////////////////////////////////// de returnat userii care cu numele de forma req.query.searchString
+    //si de returnat în format json
+    obj={"username": { "$regex": req.query.searchString }};
+    console.log(obj);
+    dbc.collection("conturi").find(obj).toArray(function(err, result) {
+      if (err)
+        throw err;
+      console.log("r--------------"+result);
+    });
+    /////////////////////////////////////////////////////
+    db.close();
+  });
+  res.send('["q","qbone","quintal"]');
+});
+
+app.get("/get_messages",(req, res)=>{
+
+
 });
 
 app.get("*",(req, res)=>{
