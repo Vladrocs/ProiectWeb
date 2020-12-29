@@ -1,4 +1,7 @@
 $( document ).ready(function() {
+    var socket = io.connect("http://localhost:80");
+    //global vars
+    var curent_chat_user="";
     //responsiveness code
     if(window.innerWidth<600){
         a=$(".ch_area")
@@ -29,8 +32,7 @@ $( document ).ready(function() {
     $(".search_bar").keypress(function(e){
         console.log();
         if(e.keyCode==13)
-            //make ajax request
-            $.ajax({
+            $.ajax({//make ajax request
                 type: "GET",
                 url: "/get_users",
                 dataType: 'json',
@@ -42,15 +44,56 @@ $( document ).ready(function() {
                         $(".peoples_list").append(slot);
                     }
                 }
-              });
-        console.log(e.key+"\n"+e.keyCode);
+            });
+        //console.log(e.key+"\n"+e.keyCode);
     });
-    $(document).on('click', '.chat_people',function(e){
-        console.log($(this));
+
+    $(document).on('click', '.chat_people',function(e){//on select people to chat
+        //console.log($(this).children(".name").text());
+        curent_chat_user=$(this).children(".name").text();
         //redo ch_area
         //ajax req to get mesages
+        $.ajax({//make ajax request
+            type: "GET",
+            url: "/get_messages",
+            dataType: 'json',
+            data: { to: curent_chat_user},
+            success:(res)=>{
+                $("div").remove(".r_message");
+                $("div").remove(".l_message");
+                //insert messages
+                for (i in res){//res need to be sorted by time&date
+                    if(res[i].from==curent_chat_user)
+                        msg='<div class="r_message"><p class="msgr">'+res[i].msg+'</p></div>';
+                    else
+                        msg='<div class="l_message"><p class="msgl">'+res[i].msg+'</p></div>';
+                    $(".send_bar").before(msg);
+                }
+            }
+        });
+    });
 
-        //l_message='<div class="l_message"><p class="msgl">'+msg+'</p></div>';
-        //r_message='<div class="r_message"><p class="msgr">'+msg+'</p></div>';
+    $(".send_bar").keypress(function(e){//on send message
+        if(e.keyCode==13 && curent_chat_user.length>0){
+            //TO SEND MESSAGE ON SOCKET
+            socket.emit('chat message',$(".send_bar").val());
+            $.ajax({//make ajax request
+                type: "GET",
+                url: "/send_message",
+                dataType: 'json',
+                data: {message: $(".send_bar").val(), to: curent_chat_user},
+                success:(res)=>{
+                    if(res!=1)
+                        alert("eroare la trimiterea mesajului");
+                }
+            });
+        }
+    });
+    //TO RECEIVE MESSAGE FROM SOCKET
+    socket.on('chat message', function(msg){
+        mm='<div class="l_message"><p class="msgl">'+msg+'</p></div>';
+        $(".send_bar").before(mm);
+        window.scrollTo(0, document.body.scrollHeight);
     });
 });
+

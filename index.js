@@ -5,6 +5,7 @@ var session = require('express-session');
 const url = require('url');
 const fs = require('fs');//to acces file from fs
 var http = require('http').createServer(app);
+var io = require('socket.io')(http);
 const mongo = require("mongodb");
 var MongoClient = mongo.MongoClient;
 
@@ -19,6 +20,11 @@ app.use(session({
 }));
 
 app.use(express.static(__dirname + '/public'));
+
+app.get("/socket.io",(req, res)=>{
+	res.sendFile(__dirname + "/node_modules/socket.io/client-dist/socket.io.js");
+});
+
 
 app.get('/', function(req, res){
   if (req.session.username!=undefined)//dacă sesiune nu este setată
@@ -125,11 +131,60 @@ app.get("/get_users",(req, res)=>{
   res.send('["q","qbone","quintal"]');
 });
 
-app.get("/get_messages",(req, res)=>{
+app.get("/send_message",(req, res)=>{
+var date_ob = new Date(Date.now());
+var date=date_ob.getDate()+"."+date_ob.getMonth()+"."+date_ob.getFullYear();
 
+var time = date_ob.getHours()+"."+date_ob.getMinutes()+"."+date_ob.getSeconds();
 
+var message={"from": req.session.username, "to": req.query.to, "msg": req.query.message, "date": date, "time": time};
+
+//insert message to db
+MongoClient.connect(uri, function(err, db) {
+	if (err) throw err;
+	var dbc = db.db("messenger");
+	dbc.collection("messages").insertOne(message, function(err, ress) {
+	  if (err) throw err;
+	  //redirect to / and display acount created
+	  res.send("1");
+	  db.close();
+	});
+  });
+//create delivery sockets
 });
 
+app.get("/get_messages",(req, res)=>{
+	var to=req.query.to;
+	var mlist=[]
+	MongoClient.connect(uri, function(err, db) {
+		var dbc = db.db("messenger");
+		//to user
+		console.log(to);
+		dbc.collection("messages").find({"from": to}).toArray(function(err, result) {
+		  if (err)
+			throw err;
+			for (i in result)
+				mlist.push(result[i]);
+		});
+		//from user
+		console.log(req.session.username);
+		dbc.collection("messages").find({"from": req.session.username}).toArray(function(err, result) {
+			if (err)
+			  throw err;
+			  for (i in result)
+				mlist.push(result[i]);
+			res.send(mlist);
+		});
+		db.close();
+	});
+});
+//socket 
+io.on('connection', function(socket){
+	socket.on('chat message', function(msg){
+	  io.emit('chat message', msg);
+	});
+});
+//socket
 app.get("*",(req, res)=>{
   res.sendFile(__dirname + '\\public\\html\\404.html');
 });
