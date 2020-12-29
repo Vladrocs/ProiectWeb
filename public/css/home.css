@@ -1,1 +1,220 @@
-body, html{	margin: 0;	padding: 0;}body{	width: 100%;	height: 100%;		background-image: url("../imagini/bg.jpg");	background-repeat: no-repeat;	background-size: cover;}.ch_list{	height: 100%;	width: 35%;	background-color: #ffffff1f;	display:inline-block;	border-right: 5px solid #3b3b3b;}.ch_area{	height: 97%;		width: 64%;	padding-top: 20px;	position: absolute;	display:inline-block;}.chat_people{	background-color: #00000059;	padding: 8px 0;	margin-top: 4px;	height: 50px;}.prof_pic{	width: 50px;	margin-left: 10px;	border-radius: 100%;	display:inline-block;}.chat_people *{	position: absolute;}.name{	margin-left: 72px;}.last_message{	margin-left: 72px;	margin-top: 30px;	color: gray;}.peoples_list{	margin-top: 80px;}.search_bar{	position: absolute;	left: 15%;	transform: translatex(-50%);	border: none;	padding: 4px 10px;	font-family: lato;	display: block;	margin: 16px 0 0 0;	width: 26%;}.name{	width: 21%;	text-overflow: ellipsis;	color: white;	overflow: hidden;	white-space: nowrap;}.last_message{	width: 21%;	text-overflow: ellipsis;	overflow: hidden;	white-space: nowrap;}.msgl{	padding: 15px;	position: relative;	border-radius: 4px;	color: white;	font-size: 18px;	margin: 5px 0;	word-break: break-all;	background-color: #0000007a;}.msgr{	padding: 15px;	margin-right: 15px;	position: relative;	border-radius: 4px;	color: white;	font-size: 18px;	margin: 5px 0;	word-break: break-all;	background-color: #0000007a;}.l_message{	display: flex;	margin-left: 15px;	width: 80%;}.r_message{	display: flex;	float: right;	margin-right: 15px;	width: 80%;}.back_arrow{	display: none;}.send_bar{	bottom: 9px;	width: 93%;	margin-left: 4%;	position: absolute;}@media screen and (max-width: 600px){	.ch_list{		height: 100%;		width: 100%;		/*background-color: red;*/		display:inline-block;		border: none;		background-image: url("../imagini/jemecherie.jpg");		background-repeat: no-repeat;		background-size: cover;	}	.ch_area{		width: 100%;		padding-top: 59px;		height: 90%;			}		.search_bar{		position: absolute;		left: 50%;		transform: translatex(-50%);		width: 80%;	}		.name{		width: 74%;		color: #d1d1d1;	}	.last_message{		width: 74%;	}		.chat_people{		background-color: #ffffff21;	}		.l_message, .r_message{		width: 76%;	}		.back_arrow{		width: 20px;		display: inline;		transform: translate(55%,108%);		position: absolute;		z-index: 10;	}}@media screen and (min-width: 600px) and (max-width: 800px){	.ch_list{		height: 100%;		width: 40%;		/*background-color: red;*/		display:inline-block;	}	.ch_area{		height: 97%;		width: 59%;		display:inline-block;	}		.search_bar{		position: absolute;		left: 20%;		transform: translatex(-50%);		width: 34%;	}		.name{		width: 28%;		color: white;	}		.last_message{		width: 28%;	}}
+body, html{
+	margin: 0;
+	padding: 0;
+}
+body{
+	width: 100%;
+	height: 100%;
+	
+	background-image: url("../imagini/bg.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.ch_list{
+	height: 100%;
+	width: 35%;
+	background-color: #ffffff1f;
+	display:inline-block;
+	border-right: 5px solid #3b3b3b;
+
+}
+
+.ch_area{
+	height: 97%;	
+	width: 64%;
+	padding-top: 20px;
+	position: absolute;
+	display:inline-block;
+}
+
+.chat_people{
+	background-color: #00000059;
+	padding: 8px 0;
+	margin-top: 4px;
+	height: 50px;
+}
+
+.prof_pic{
+	width: 50px;
+	margin-left: 10px;
+	border-radius: 100%;
+	display:inline-block;
+}
+
+.chat_people *{
+	position: absolute;
+}
+.name{
+	margin-left: 72px;
+}
+.last_message{
+	margin-left: 72px;
+	margin-top: 30px;
+	color: gray;
+}
+.peoples_list{
+	margin-top: 80px;
+}
+
+.search_bar{
+	position: absolute;
+	left: 15%;
+	transform: translatex(-50%);
+	border: none;
+	padding: 4px 10px;
+	font-family: lato;
+	display: block;
+	margin: 16px 0 0 0;
+	width: 26%;
+}
+
+.name{
+	width: 21%;
+	text-overflow: ellipsis;
+	color: white;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.last_message{
+	width: 21%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.msgl{
+	padding: 15px;
+	position: relative;
+	border-radius: 4px;
+	color: white;
+	font-size: 18px;
+	margin: 5px 0;
+	word-break: break-all;
+	background-color: #0000007a;
+}
+
+.msgr{
+	padding: 15px;
+	margin-right: 15px;
+	position: relative;
+	border-radius: 4px;
+	color: white;
+	font-size: 18px;
+	margin: 5px 0;
+	word-break: break-all;
+	background-color: #0000007a;
+}
+
+.l_message{
+	display: flex;
+	margin-left: 15px;
+	width: 80%;
+}
+
+.r_message{
+	display: flex;
+	float: right;
+	margin-right: 15px;
+	width: 80%;
+}
+
+.back_arrow{
+	display: none;
+}
+
+.send_bar{
+	bottom: 9px;
+	width: 93%;
+	margin-left: 4%;
+	position: absolute;
+}
+
+.lobtn{
+	position: absolute;
+	width: 40px;
+	right: 10px;
+}
+
+@media screen and (max-width: 600px){
+	.ch_list{
+		height: 100%;
+		width: 100%;
+		/*background-color: red;*/
+		display:inline-block;
+		border: none;
+		background-image: url("../imagini/jemecherie.jpg");
+		background-repeat: no-repeat;
+		background-size: cover;
+	}
+	.ch_area{
+		width: 100%;
+		padding-top: 59px;
+		height: 90%;
+		
+	}
+	
+	.search_bar{
+		position: absolute;
+		left: 50%;
+		transform: translatex(-50%);
+		width: 80%;
+	}
+	
+	.name{
+		width: 74%;
+		color: #d1d1d1;
+	}
+	.last_message{
+		width: 74%;
+	}
+	
+	.chat_people{
+		background-color: #ffffff21;
+	}
+	
+	.l_message, .r_message{
+		width: 76%;
+	}
+	
+	.back_arrow{
+		width: 20px;
+		display: inline;
+		transform: translate(55%,108%);
+		position: absolute;
+		z-index: 10;
+	}
+
+}
+
+@media screen and (min-width: 600px) and (max-width: 800px){
+	.ch_list{
+		height: 100%;
+		width: 40%;
+		/*background-color: red;*/
+		display:inline-block;
+	}
+
+	.ch_area{
+		height: 97%;
+		width: 59%;
+		display:inline-block;
+	}
+	
+	.search_bar{
+		position: absolute;
+		left: 20%;
+		transform: translatex(-50%);
+		width: 34%;
+	}
+	
+	.name{
+		width: 28%;
+		color: white;
+	}
+	
+	.last_message{
+		width: 28%;
+	}
+}
+

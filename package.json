@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Vladrocs/ProiectWeb#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
     "fs": "0.0.1-security",
     "mongodb": "^3.6.3",
     "nodemon": "^2.0.6",
