@@ -14,8 +14,8 @@ const client = new MongoClient(uri,{useNewUrlParser: true},function (err, db) {}
 
 app.use(session({
 	secret: 'secret',
-  resave: true,
-  cookie: { maxAge: 8*60*60*1000 },
+	resave: true,
+	cookie: { maxAge: 8*60*60*1000 },
 	saveUninitialized: true
 }));
 
@@ -27,108 +27,110 @@ app.get("/socket.io",(req, res)=>{
 
 
 app.get('/', function(req, res){
-  if (req.session.username!=undefined)//dacă sesiune nu este setată
-    return res.redirect("/home")
-  res.sendFile(__dirname + '/public/html/login.html');
+	if (req.session.username!=undefined)//dacă sesiune nu este setată
+	return res.redirect("/home")
+	res.sendFile(__dirname + '/public/html/login.html');
 });
 
 app.get('/login', function(req, res){
-  return res.redirect("/home");
+	return res.redirect("/home");
 });
 
 app.post('/login', function(req, res){
-  if (req.session.username!=undefined)//dacă sesiunea nu este setată
-    return res.redirect("/home");
-  var body="";
-  req.on("data", function (data) {
-    body +=data;
-  });
-  req.on("end",function(){
-    var variables =  qs.parse(body);
-    console.log(variables);
-    MongoClient.connect(uri, function(err, db) {
-      var dbc = db.db("messenger");
-      obj={username: variables.username, password: variables.password};
-      dbc.collection("conturi").find(obj).toArray(function(err, result) {
-        if (err)
-          throw err;
-        if(result.length==0){
-          console.log("credentiale gresite");
-          //de trimis var la user pt cred inv
-          return res.redirect("/");
-        }else{
-          console.log("cred vaide");
-          req.session.username=variables.username;
-          return res.redirect("/home")
-        }      
-      });
-      db.close();
-    });
-  });
+	if (req.session.username!=undefined)//dacă sesiunea nu este setată
+	return res.redirect("/home");
+	var body="";
+	req.on("data", function (data) {
+	body +=data;
+	});
+	req.on("end",function(){
+	var variables =	qs.parse(body);
+	console.log(variables);
+	MongoClient.connect(uri, function(err, db) {
+		var dbc = db.db("messenger");
+		obj={username: variables.username, password: variables.password};
+		dbc.collection("conturi").find(obj).toArray(function(err, result) {
+		if (err)
+			throw err;
+		if(result.length==0){
+			console.log("credentiale gresite");
+			//de trimis var la user pt cred inv
+			return res.redirect("/?err=inv_cred");
+		}else{
+			console.log("cred vaide");
+			req.session.username=variables.username;
+			return res.redirect("/home")
+		}		
+		});
+		db.close();
+	});
+	});
 });
 
 app.get('/home', function(req, res){
-  if (req.session.username==undefined)//dacă sesiune nu este setată
-    return res.redirect("/")
-  res.sendFile(__dirname + '\\public\\html\\home.html');
+	if (req.session.username==undefined)//dacă sesiune nu este setată
+	return res.redirect("/")
+	res.sendFile(__dirname + '\\public\\html\\home.html');
 });
 
 app.get('/inregistrare', function(req, res){
-  if (req.session.username!=undefined)//dacă sesiune nu este setată
-    return res.redirect("/home");
-  res.sendFile(__dirname + '\\public\\html\\inregistrare.html');
+	if (req.session.username!=undefined)//dacă sesiune nu este setată
+	return res.redirect("/home");
+	res.sendFile(__dirname + '\\public\\html\\inregistrare.html');
 });
 
 app.post('/register', function(req, res){
-  if (req.session.username!=undefined)//dacă sesiune nu este setată
-    return res.redirect("/home");
-  var va="";
-  req.on("data", function (data) {
-    va +=data;
-  });
-  req.on("end",function(){
-    var urlVars =  qs.parse(va);
-    console.log(urlVars);
-    //efective register
-    if(urlVars.username.length==0 || urlVars.password.length==0 || urlVars.mail.length==0)
-      res.send("username invalid");
-      //redirect to intregistrare and display incorect data
-    MongoClient.connect(uri, function(err, db) {
-      if (err) throw err;
-      var dbc = db.db("messenger");
-      dbc.collection("conturi").insertOne(urlVars, function(err, ress) {
-        if (err) throw err;
-        //redirect to / and display acount created
-        res.send("1 rec inserted in db");
-        db.close();
-      });
-    });
-  });
+	if (req.session.username!=undefined)//dacă sesiune nu este setată
+	return res.redirect("/home");
+	var va="";
+	req.on("data", function (data) {
+	va +=data;
+	});
+	req.on("end",function(){
+	var urlVars =	qs.parse(va);
+	console.log(urlVars);
+	//efective register
+	if(urlVars.username.length==0 || urlVars.password.length==0 || urlVars.mail.length==0){
+		res.redirect("/inregistrare?err=incorect_data");
+		//redirect to intregistrare and display incorect data
+		MongoClient.connect(uri, function(err, db) {
+			if (err) throw err;
+			var dbc = db.db("messenger");
+			dbc.collection("conturi").insertOne(urlVars, function(err, ress) {
+			if (err) throw err;
+			//redirect to / and display acount created
+			res.redirect("/?err=0");
+			db.close();
+			});
+		});
+	}
+	});
 });
 
 app.get("/log_out",(req, res)=>{
  // console.log(req.session);
-  req.session.destroy();
+	req.session.destroy();
  // console.log(req.session);
-  return res.redirect("/");
+	return res.redirect("/");
 });
 
 app.get("/get_users",(req, res)=>{
-  MongoClient.connect(uri, function(err, db) {
-    var dbc = db.db("messenger");
-    ////////////////////////////////////////////////////// de returnat userii care cu numele de forma req.query.searchString
-    //si de returnat în format json
-    obj={"username": { "$regex": req.query.searchString }};
-    console.log(obj);
-    dbc.collection("conturi").find(obj).toArray(function(err, result) {
-      if (err)
-        throw err;
-      console.log("r--------------"+result);
-    });
-    /////////////////////////////////////////////////////
-    db.close();
-  });
-  res.send('["q","qbone","quintal"]');
+	MongoClient.connect(uri, function(err, db) {
+		var dbc = db.db("messenger");
+		ss=req.query.searchString;
+		obj={"username": { $regex: new RegExp(ss.toLowerCase(),"i") }};
+		dbc.collection("conturi").find(obj).toArray(function(err, result) {
+			if (err)
+				throw err;
+			//console.log("r--------------"+JSON.stringify(result));
+			list=[];
+			for(i in result)
+				list.push(result[i].username);
+			res.send(list);
+		});
+		
+		db.close();
+	});
 });
 
 app.get("/send_message",(req, res)=>{
@@ -144,12 +146,12 @@ MongoClient.connect(uri, function(err, db) {
 	if (err) throw err;
 	var dbc = db.db("messenger");
 	dbc.collection("messages").insertOne(message, function(err, ress) {
-	  if (err) throw err;
-	  //redirect to / and display acount created
-	  res.send("1");
-	  db.close();
+		if (err) throw err;
+		//redirect to / and display acount created
+		res.send("1");
+		db.close();
 	});
-  });
+	});
 //create delivery sockets
 });
 
@@ -161,7 +163,7 @@ app.get("/get_messages",(req, res)=>{
 		//to user
 		console.log(to);
 		dbc.collection("messages").find({"from": to}).toArray(function(err, result) {
-		  if (err)
+			if (err)
 			throw err;
 			for (i in result)
 				mlist.push(result[i]);
@@ -170,8 +172,8 @@ app.get("/get_messages",(req, res)=>{
 		console.log(req.session.username);
 		dbc.collection("messages").find({"from": req.session.username}).toArray(function(err, result) {
 			if (err)
-			  throw err;
-			  for (i in result)
+				throw err;
+				for (i in result)
 				mlist.push(result[i]);
 			res.send(mlist);
 		});
@@ -181,14 +183,14 @@ app.get("/get_messages",(req, res)=>{
 //socket 
 io.on('connection', function(socket){
 	socket.on('chat message', function(msg){
-	  io.emit('chat message', msg);
+		io.emit('chat message', msg);
 	});
 });
 //socket
 app.get("*",(req, res)=>{
-  res.sendFile(__dirname + '\\public\\html\\404.html');
+	res.sendFile(__dirname + '\\public\\html\\404.html');
 });
 
 http.listen(80, () => {
-  console.log('listening on *:80');
+	console.log('listening on *:80');
 }); 

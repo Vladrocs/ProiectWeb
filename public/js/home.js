@@ -51,6 +51,8 @@ $( document ).ready(function() {
     $(document).on('click', '.chat_people',function(e){//on select people to chat
         //console.log($(this).children(".name").text());
         curent_chat_user=$(this).children(".name").text();
+        $(".chat_people").css("background-color", "#00000059");
+        $(this).css("background-color", "navajowhite");
         //redo ch_area
         //ajax req to get mesages
         $.ajax({//make ajax request
@@ -97,3 +99,10 @@ $( document ).ready(function() {
     });
 });
 
+/*$.notify(msg, {
+              className:type,
+              clickToHide: true,
+              autoHide: false,
+              showDuration: 150,
+              globalPosition: 'top right'
+            }); */
