@@ -98,11 +98,3 @@ $( document ).ready(function() {
         window.scrollTo(0, document.body.scrollHeight);
     });
 });
-
-/*$.notify(msg, {
-              className:type,
-              clickToHide: true,
-              autoHide: false,
-              showDuration: 150,
-              globalPosition: 'top right'
-            }); */

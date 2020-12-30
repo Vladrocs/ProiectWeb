@@ -7,6 +7,8 @@ const fs = require('fs');//to acces file from fs
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 const mongo = require("mongodb");
+const notifier = require('node-notifier');
+
 var MongoClient = mongo.MongoClient;
 
 const uri ="mongodb://localhost:27017";
@@ -18,6 +20,11 @@ app.use(session({
 	cookie: { maxAge: 8*60*60*1000 },
 	saveUninitialized: true
 }));
+
+function validateEmail(email) {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+}
 
 app.use(express.static(__dirname + '/public'));
 
@@ -45,19 +52,15 @@ app.post('/login', function(req, res){
 	});
 	req.on("end",function(){
 	var variables =	qs.parse(body);
-	console.log(variables);
 	MongoClient.connect(uri, function(err, db) {
 		var dbc = db.db("messenger");
 		obj={username: variables.username, password: variables.password};
 		dbc.collection("conturi").find(obj).toArray(function(err, result) {
 		if (err)
 			throw err;
-		if(result.length==0){
-			console.log("credentiale gresite");
-			//de trimis var la user pt cred inv
+		if(result.length==0){//credentiale gresite
 			return res.redirect("/?err=inv_cred");
-		}else{
-			console.log("cred vaide");
+		}else{//credentiale valide
 			req.session.username=variables.username;
 			return res.redirect("/home")
 		}		
@@ -74,37 +77,34 @@ app.get('/home', function(req, res){
 });
 
 app.get('/inregistrare', function(req, res){
-	if (req.session.username!=undefined)//dacă sesiune nu este setată
-	return res.redirect("/home");
+	if (req.session.username!=undefined)//dacă sesiune este setată
+	  return res.redirect("/home");
 	res.sendFile(__dirname + '\\public\\html\\inregistrare.html');
 });
 
 app.post('/register', function(req, res){
-	if (req.session.username!=undefined)//dacă sesiune nu este setată
-	return res.redirect("/home");
+	if (req.session.username!=undefined)//dacă sesiune este setată
+	  return res.redirect("/home");
 	var va="";
 	req.on("data", function (data) {
 	va +=data;
 	});
 	req.on("end",function(){
-	var urlVars =	qs.parse(va);
-	console.log(urlVars);
-	//efective register
-	if(urlVars.username.length==0 || urlVars.password.length==0 || urlVars.mail.length==0){
-		res.redirect("/inregistrare?err=incorect_data");
-		//redirect to intregistrare and display incorect data
-		MongoClient.connect(uri, function(err, db) {
-			if (err) throw err;
-			var dbc = db.db("messenger");
-			dbc.collection("conturi").insertOne(urlVars, function(err, ress) {
-			if (err) throw err;
-			//redirect to / and display acount created
-			res.redirect("/?err=0");
-			db.close();
-			});
-		});
-	}
-	});
+    var urlVars =	qs.parse(va);
+    //efective register
+    if(urlVars.username.length==0 || urlVars.mail.length==0 || urlVars.password.length<8 || !validateEmail(urlVars.mail))
+      res.redirect("/inregistrare?err=incorect_data");
+    else{
+      MongoClient.connect(uri, function(err, db) {
+        var dbc = db.db("messenger");
+        dbc.collection("conturi").insertOne(urlVars, function(err, ress){
+        if (err) throw err;
+          res.redirect("/?err=0");
+        db.close();
+        });
+      });
+    }
+  });
 });
 
 app.get("/log_out",(req, res)=>{
@@ -152,7 +152,6 @@ MongoClient.connect(uri, function(err, db) {
 		db.close();
 	});
 	});
-//create delivery sockets
 });
 
 app.get("/get_messages",(req, res)=>{
@@ -160,8 +159,7 @@ app.get("/get_messages",(req, res)=>{
 	var mlist=[]
 	MongoClient.connect(uri, function(err, db) {
 		var dbc = db.db("messenger");
-		//to user
-		console.log(to);
+    //to user
 		dbc.collection("messages").find({"from": to}).toArray(function(err, result) {
 			if (err)
 			throw err;
@@ -169,7 +167,6 @@ app.get("/get_messages",(req, res)=>{
 				mlist.push(result[i]);
 		});
 		//from user
-		console.log(req.session.username);
 		dbc.collection("messages").find({"from": req.session.username}).toArray(function(err, result) {
 			if (err)
 				throw err;
@@ -183,7 +180,15 @@ app.get("/get_messages",(req, res)=>{
 //socket 
 io.on('connection', function(socket){
 	socket.on('chat message', function(msg){
-		io.emit('chat message', msg);
+    //console.log("am primit: "+msg)-----------------------------in progres
+    io.emit('chat message', msg);
+    
+    notifier.notify('Message');
+    notifier.notify({
+      title: 'My notification',
+      message: 'Hello, there!'
+    });
+
 	});
 });
 //socket
