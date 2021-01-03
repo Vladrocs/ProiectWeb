@@ -51,6 +51,8 @@ $( document ).ready(function() {
     $(document).on('click', '.chat_people',function(e){//on select people to chat
         //console.log($(this).children(".name").text());
         curent_chat_user=$(this).children(".name").text();
+        $(".chat_people").css("background-color", "#00000059");
+        $(this).css("background-color", "navajowhite");
         //redo ch_area
         //ajax req to get mesages
         $.ajax({//make ajax request
@@ -67,8 +69,9 @@ $( document ).ready(function() {
                         msg='<div class="r_message"><p class="msgr">'+res[i].msg+'</p></div>';
                     else
                         msg='<div class="l_message"><p class="msgl">'+res[i].msg+'</p></div>';
-                    $(".send_bar").before(msg);
+                    $(".ch_area").append(msg);
                 }
+                document.getElementsByClassName("ch_area")[0].scrollTo(0, document.getElementsByClassName("ch_area")[0].scrollHeight);
             }
         });
     });
@@ -92,8 +95,16 @@ $( document ).ready(function() {
     //TO RECEIVE MESSAGE FROM SOCKET
     socket.on('chat message', function(msg){
         mm='<div class="l_message"><p class="msgl">'+msg+'</p></div>';
-        $(".send_bar").before(mm);
-        window.scrollTo(0, document.body.scrollHeight);
+        $(".ch_area").append(mm);
+        console.log(document.getElementsByClassName("ch_area")[0].scrollHeight);
+        document.getElementsByClassName("ch_area")[0].scrollTo(0, document.getElementsByClassName("ch_area")[0].scrollHeight);
     });
 });
 
+/*$.notify(msg, {
+              className:type,
+              clickToHide: true,
+              autoHide: false,
+              showDuration: 150,
+              globalPosition: 'top right'
+            }); */
