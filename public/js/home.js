@@ -88,6 +88,7 @@ $( document ).ready(function() {
                 success:(res)=>{
                     if(res!=1)
                         alert("eroare la trimiterea mesajului");
+                        $(".send_bar").val("");
                 }
             });
         }
