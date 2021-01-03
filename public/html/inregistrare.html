@@ -2,6 +2,30 @@
 <html>
     <head>
         <link rel="stylesheet" href="../css/inregistrare.css">
+        <script src="../js/jquery.js"></script>
+        <script src="../js/notify.js"></script>
+        <script>
+            $( document ).ready(function() {
+                var params = new URLSearchParams(window.location.search);
+                if(params.has("err")==true){
+                    if(params.get("err")=="incorect_data"){
+                        msg="Credentiale invalide";
+                        type="error";
+                    }
+
+                    $.notify(msg, {
+                        className: type,
+                        clickToHide: true,
+                        autoHide: false,
+                        showDuration: 150,
+                        globalPosition: 'top right'
+                    });
+                }
+            });
+            $(document).on('click', '.notifyjs-corner', function(e){
+                window.location.href=window.location.href.split('?')[0];
+            });
+        </script>
     </head>
     <body>
         <div id="form_container">
@@ -27,7 +51,6 @@
                 <div class="div_inregistrare">
                     <input type="submit" class="button">
                 </div>
-                
             </form>
         </div>
     </body>

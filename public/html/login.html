@@ -3,6 +3,33 @@
     <head>
         <title>Titlu</title>
         <link rel="stylesheet" href="../css/login.css">
+        <script src="../js/jquery.js"></script>
+        <script src="../js/notify.js"></script>
+		<script>
+            $( document ).ready(function() {
+                var params = new URLSearchParams(window.location.search);
+                if(params.has("err")==true){
+                    if(params.get("err")=="0"){
+                        msg="Cont creat cu succes";
+                        type="success";
+                    }else if(params.get("err")=="inv_cred"){
+                        msg="Credentiale invalide";
+                        type="error";
+                    }
+                    
+                    $.notify(msg, {
+                        className: type,
+                        clickToHide: true,
+                        autoHide: false,
+                        showDuration: 150,
+                        globalPosition: 'top right'
+                    });
+                }
+            });
+            $(document).on('click', '.notifyjs-corner', function(e){
+                window.location.href=window.location.href.split('?')[0];
+            });
+		</script>
     </head>
     <body>
         <div id="form_container">

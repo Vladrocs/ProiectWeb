@@ -100,11 +100,3 @@ $( document ).ready(function() {
         document.getElementsByClassName("ch_area")[0].scrollTo(0, document.getElementsByClassName("ch_area")[0].scrollHeight);
     });
 });
-
-/*$.notify(msg, {
-              className:type,
-              clickToHide: true,
-              autoHide: false,
-              showDuration: 150,
-              globalPosition: 'top right'
-            }); */
