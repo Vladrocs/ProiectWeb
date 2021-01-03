@@ -55,6 +55,51 @@ img#bg-image {
 	margin-top: 4px;
 	height: 50px;
 }
+.menuu{
+	width: 100%;
+	height: 50px;
+	display:flex;
+	flex-direction: row;
+}
+.profile_image{
+	margin-top: 5px;
+	width: 50px;
+	border-radius: 100%;
+	background-color:red;
+	float:right;
+}
+.name_holder{
+	display:inline-block;
+	padding: 0.5em 3em;
+	border: 0.16em solid #FFFFFF;
+	margin: 5px 0.3em 0.3em 5px;
+	box-sizing: border-box;
+	text-decoration: none;
+	text-transform:uppercase;
+	font-family:'Roboto', sans-serif;
+	font-weight: 400;
+	position:relative;
+	color:#DDDDDD;
+}
+.logout_button{
+	display:inline-block;
+	padding: 0.5em 3em;
+	border: 0.16em solid #FFFFFF;
+	margin: 5px 0.3em 0.3em 0;
+	box-sizing: border-box;
+	text-decoration: none;
+	text-transform:uppercase;
+	font-family:'Roboto', sans-serif;
+	font-weight: 400;
+	position:absolute;
+	right: 0;
+	color:#DDDDDD;
+}
+.logout_button:hover{
+	color:#DDDDDD;
+	border-color:#BBBBBB;
+}
+
 
 .prof_pic{
 	width: 50px;
