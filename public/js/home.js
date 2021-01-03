@@ -2,6 +2,7 @@ $( document ).ready(function() {
     var socket = io.connect("http://localhost:80");
     //global vars
     var curent_chat_user="";
+    var curent_user="";
     //responsiveness code
     if(window.innerWidth<600){
         a=$(".ch_area")
@@ -51,6 +52,7 @@ $( document ).ready(function() {
     $(document).on('click', '.chat_people',function(e){//on select people to chat
         //console.log($(this).children(".name").text());
         curent_chat_user=$(this).children(".name").text();
+        curent_user=$(this);
         $(".chat_people").css("background-color", "#00000059");
         $(this).css("background-color", "navajowhite");
         //redo ch_area
@@ -97,7 +99,7 @@ $( document ).ready(function() {
     socket.on('chat message', function(msg){
         mm='<div class="l_message"><p class="msgl">'+msg+'</p></div>';
         $(".ch_area").append(mm);
-        console.log(document.getElementsByClassName("ch_area")[0].scrollHeight);
+        curent_user.click();
         document.getElementsByClassName("ch_area")[0].scrollTo(0, document.getElementsByClassName("ch_area")[0].scrollHeight);
     });
 });
