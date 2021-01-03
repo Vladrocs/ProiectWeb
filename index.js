@@ -134,12 +134,8 @@ app.get("/get_users",(req, res)=>{
 });
 
 app.get("/send_message",(req, res)=>{
-var date_ob = new Date(Date.now());
-var date=date_ob.getDate()+"."+date_ob.getMonth()+"."+date_ob.getFullYear();
 
-var time = date_ob.getHours()+"."+date_ob.getMinutes()+"."+date_ob.getSeconds();
-
-var message={"from": req.session.username, "to": req.query.to, "msg": req.query.message, "date": date, "time": time};
+var message={"from": req.session.username, "to": req.query.to, "msg": req.query.message, "date": new Date(Date.now())};
 
 //insert message to db
 MongoClient.connect(uri, function(err, db) {
@@ -159,22 +155,16 @@ app.get("/get_messages",(req, res)=>{
 	var mlist=[]
 	MongoClient.connect(uri, function(err, db) {
 		var dbc = db.db("messenger");
-    //to user
-		dbc.collection("messages").find({"from": to}).toArray(function(err, result) {
-			if (err)
-			throw err;
-			for (i in result)
-				mlist.push(result[i]);
-		});
-		//from user
-		dbc.collection("messages").find({"from": req.session.username}).toArray(function(err, result) {
+		//noe varrrrrr
+		//.limit(yourValue);	
+		dbc.collection("messages").find().sort({"date":1}).toArray(function(err, result) {
 			if (err)
 				throw err;
 				for (i in result)
-				mlist.push(result[i]);
+					if(result[i].to==to && result[i].from==req.session.username || result[i].to==req.session.username && result[i].from==to)
+						mlist.push(result[i]);
 			res.send(mlist);
 		});
-		db.close();
 	});
 });
 //socket 
@@ -183,10 +173,10 @@ io.on('connection', function(socket){
     //console.log("am primit: "+msg)-----------------------------in progres
     io.emit('chat message', msg);
     
-    notifier.notify('Message');
     notifier.notify({
-      title: 'My notification',
-      message: 'Hello, there!'
+	  title: 'New message',
+	  icon: __dirname+'/public/imagini/notify_icon.jpg',
+      message: msg
     });
 
 	});

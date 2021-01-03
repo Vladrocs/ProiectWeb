@@ -180,14 +180,18 @@ img#bg-image {
 .l_message{
 	display: flex;
 	margin-left: 15px;
-	width: 80%;
+	flex-direction: column;
+    clear: both;
+	width: 35%;
 }
 
 .r_message{
 	display: flex;
-	float: right;
-	margin-right: 15px;
-	width: 80%;
+    float: right;
+    margin-right: 15px;
+    flex-direction: column;
+    clear: both;
+    width: 35%;
 }
 
 .back_arrow{
