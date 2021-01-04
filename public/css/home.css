@@ -57,17 +57,19 @@ img#bg-image {
 }
 .menuu{
 	width: 100%;
-	height: 50px;
+	height: 55px;
 	display:flex;
 	flex-direction: row;
 }
 .profile_image{
 	margin-top: 5px;
 	width: 50px;
+	height: 50px;
 	border-radius: 100%;
 	background-color:red;
 	float:right;
 }
+/*
 .name_holder{
 	display:inline-block;
 	padding: 0.5em 3em;
@@ -80,6 +82,10 @@ img#bg-image {
 	font-weight: 400;
 	position:relative;
 	color:#DDDDDD;
+}*/
+.username{
+	margin: auto 20px;
+	color: white;
 }
 .logout_button{
 	display:inline-block;

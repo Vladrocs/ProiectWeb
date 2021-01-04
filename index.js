@@ -127,25 +127,31 @@ app.get("/get_users",(req, res)=>{//get users based on a search string
 	});
 });
 
+
+function removeItemOnce(arr, value) {
+	var index = arr.indexOf(value);
+	if (index > -1) {
+	  arr.splice(index, 1);
+	}
+	return arr;
+  }
+
 app.get("/get_recent_users",(req, res)=>{//get users based on a session
-	//-----------------in progresssssssssssssss-----------------------------------------------
-	//prb se repeta
+	var username=req.session.username;
+	console.log(username);
 	MongoClient.connect(uri, function(err, db) {
 		var dbc = db.db("messenger");
-		dbc.collection("messages").find().sort({"date":1}).toArray(function(err, result) {
-			list=[];
+		list=[];
+		console.log(username);
+		var search_obi={"$or": [{"from": { "$eq": username }},{"to":{"$eq": username}}]};
+		console.log(search_obi);
+		//dbc.collection("messages").distinct("to")
+		dbc.collection("messages").find(search_obi).sort({"date":-1}).toArray(function(err, result){//
 			for (i in result){
-				if(result[i].from==req.session.username && !(result[i].to in list)){
-					list.push(result[i].to);
-					console.log(result[i]);
-				}
-				if(result[i].to==req.session.username && !(result[i].from in list)){
-					list.push(result[i].from);
-					//console.log(result[i]);
-				}
+				list.push(result[i].to);
+				list.push(result[i].from);
 			}
-			console.log(list);
-			res.send(list);
+			res.send(removeItemOnce(Array.from(new Set(list)),""));
 		});
 		db.close();
 	});

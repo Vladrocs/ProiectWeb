@@ -1,6 +1,7 @@
 $( document ).ready(function() {
     function get_username(){
         var username="";
+        var curent_user="";
         $.ajax({//make ajax request
             type: "GET",
             'async':false,
@@ -18,9 +19,15 @@ $( document ).ready(function() {
             type: "GET",
             'async':false,
             url: "/get_recent_users",
-            dataType: 'text',
+            dataType: 'json',
             success:(res)=>{
                 console.log(res);
+                for(i in res){
+                    slot='<div class="chat_people"><img class="prof_pic" src="../imagini/background.jpg"><p class="name">'+res[i]+'</p><p class="last_message">Last message</p></div>';
+                    $(".peoples_list").append(slot);
+                }
+                first_chat=document.getElementsByClassName("chat_people")[0];
+                first_chat.click();
             }
         });
     }
@@ -144,5 +151,5 @@ $( document ).ready(function() {
         }//else 
         //    console.log("nu inserez");
         });
-    //poulate_ch_list_at_startup();
+    poulate_ch_list_at_startup();
 });
