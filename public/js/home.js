@@ -1,8 +1,23 @@
 $( document ).ready(function() {
-    var socket = io.connect("http://localhost:80");
+    function get_username(){
+        var username="";
+        $.ajax({//make ajax request
+            type: "GET",
+            'async':false,
+            url: "/get_username",
+            dataType: 'text',
+            success:(res)=>{
+                username=res
+            }
+        });
+        return username;
+    }
+
+    var socket = io.connect("http://localhost:80");//192.168.1.242
     //global vars
     var curent_chat_user="";
     var curent_user="";
+    var socket_on=0;
     //responsiveness code
     if(window.innerWidth<600){
         a=$(".ch_area")
@@ -31,7 +46,6 @@ $( document ).ready(function() {
     }
     //searc for user
     $(".search_bar").keypress(function(e){
-        console.log();
         if(e.keyCode==13)
             $.ajax({//make ajax request
                 type: "GET",
@@ -81,8 +95,15 @@ $( document ).ready(function() {
     $(".send_bar").keypress(function(e){//on send message
         if(e.keyCode==13 && curent_chat_user.length>0){
             //TO SEND MESSAGE ON SOCKET
-            socket.emit('chat message',$(".send_bar").val());
-            $.ajax({//make ajax request
+            socket.emit('message',{"to": curent_chat_user, "from": get_username(), "msg": $(".send_bar").val()});
+            var ch_area = document.getElementsByClassName("ch_area")[0];
+            msg='<div class="l_message"><p class="msgl">'+$(".send_bar").val()+'</p></div>';
+            $(".ch_area").append(msg);
+            if(curent_user.length>0){
+                curent_user.click();//tedraw left right messages wit div reload
+                ch_area.scrollTo(0, ch_area.scrollHeight);
+            }
+            /*$.ajax({//make ajax request
                 type: "GET",
                 url: "/send_message",
                 dataType: 'json',
@@ -92,14 +113,24 @@ $( document ).ready(function() {
                         alert("eroare la trimiterea mesajului");
                         $(".send_bar").val("");
                 }
-            });
+            });*/
         }
     });
+    if(socket_on==0)//conect to server socket
+        socket.emit("set_online",{username: get_username()});
     //TO RECEIVE MESSAGE FROM SOCKET
-    socket.on('chat message', function(msg){
-        mm='<div class="l_message"><p class="msgl">'+msg+'</p></div>';
-        $(".ch_area").append(mm);
-        curent_user.click();
-        document.getElementsByClassName("ch_area")[0].scrollTo(0, document.getElementsByClassName("ch_area")[0].scrollHeight);
-    });
+    socket.on('message', function(data){
+        console.log('vine ceva pe socket');
+        if(data.from==curent_chat_user){//just for safety
+            var ch_area = document.getElementsByClassName("ch_area")[0];
+            mm='<div class="r_message"><p class="msgr">'+data.msg+'</p></div>';
+            $(".ch_area").append(mm);
+            if(curent_user.length>0){
+                curent_user.click();//tedraw left right messages wit div reload
+                ch_area.scrollTo(0, ch_area.scrollHeight);
+            }
+        }//else 
+        //    console.log("nu inserez");
+        });
+    console.log(get_username());
 });

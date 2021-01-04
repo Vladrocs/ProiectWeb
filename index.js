@@ -8,8 +8,11 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 const mongo = require("mongodb");
 const notifier = require('node-notifier');
+const { Console } = require('console');
 
 var MongoClient = mongo.MongoClient;
+
+socketIds=[];
 
 const uri ="mongodb://localhost:27017";
 const client = new MongoClient(uri,{useNewUrlParser: true},function (err, db) {});
@@ -56,8 +59,6 @@ app.post('/login', function(req, res){
 		var dbc = db.db("messenger");
 		obj={username: variables.username, password: variables.password};
 		dbc.collection("conturi").find(obj).toArray(function(err, result) {
-		if (err)
-			throw err;
 		if(result.length==0){//credentiale gresite
 			return res.redirect("/?err=inv_cred");
 		}else{//credentiale valide
@@ -98,7 +99,6 @@ app.post('/register', function(req, res){
       MongoClient.connect(uri, function(err, db) {
         var dbc = db.db("messenger");
         dbc.collection("conturi").insertOne(urlVars, function(err, ress){
-        if (err) throw err;
           res.redirect("/?err=0");
         db.close();
         });
@@ -108,9 +108,7 @@ app.post('/register', function(req, res){
 });
 
 app.get("/log_out",(req, res)=>{
- // console.log(req.session);
 	req.session.destroy();
- // console.log(req.session);
 	return res.redirect("/");
 });
 
@@ -120,9 +118,6 @@ app.get("/get_users",(req, res)=>{
 		ss=req.query.searchString;
 		obj={"username": { $regex: new RegExp(ss.toLowerCase(),"i") }};
 		dbc.collection("conturi").find(obj).toArray(function(err, result) {
-			if (err)
-				throw err;
-			//console.log("r--------------"+JSON.stringify(result));
 			list=[];
 			for(i in result)
 				list.push(result[i].username);
@@ -134,19 +129,15 @@ app.get("/get_users",(req, res)=>{
 });
 
 app.get("/send_message",(req, res)=>{
-
 var message={"from": req.session.username, "to": req.query.to, "msg": req.query.message, "date": new Date(Date.now())};
-
 //insert message to db
-MongoClient.connect(uri, function(err, db) {
-	if (err) throw err;
-	var dbc = db.db("messenger");
-	dbc.collection("messages").insertOne(message, function(err, ress) {
-		if (err) throw err;
-		//redirect to / and display acount created
-		res.send("1");
-		db.close();
-	});
+	MongoClient.connect(uri, function(err, db) {
+		var dbc = db.db("messenger");
+		dbc.collection("messages").insertOne(message, function(err, ress) {
+			//redirect to / and display acount created
+			res.send("1");
+			db.close();
+		});
 	});
 });
 
@@ -155,35 +146,53 @@ app.get("/get_messages",(req, res)=>{
 	var mlist=[]
 	MongoClient.connect(uri, function(err, db) {
 		var dbc = db.db("messenger");
-		//noe varrrrrr
-		//.limit(yourValue);	
 		dbc.collection("messages").find().sort({"date":1}).toArray(function(err, result) {
-			if (err)
-				throw err;
-				for (i in result)
-					if(result[i].to==to && result[i].from==req.session.username || result[i].to==req.session.username && result[i].from==to)
-						mlist.push(result[i]);
+			for (i in result)
+				if(result[i].to==to && result[i].from==req.session.username || result[i].to==req.session.username && result[i].from==to)
+					mlist.push(result[i]);
 			res.send(mlist);
 		});
 	});
 });
-//socket 
-io.on('connection', function(socket){
-	socket.on('chat message', function(msg){
-    //console.log("am primit: "+msg)-----------------------------in progres
-    io.emit('chat message', msg);
-    
-    notifier.notify({
-	  title: 'New message',
-	  icon: __dirname+'/public/imagini/notify_icon.jpg',
-      message: msg
-    });
 
+app.get("/get_username",(req, res)=>{
+	res.send(req.session.username);
+});
+
+//conect to socket 
+io.on('connection', function(socket){
+	//console.log("am primit: "+socket.id)//-----------------------------in progres
+	socket.on('set_online',(data)=>{//se user online
+		socketIds.push({[data.username] : socket.id});
+		console.log(socketIds);
+	});
+	socket.on('message', function(data){//when receive message on socket
+		var message={"from": data.from, "to": data.to, "msg": data.msg, "date": new Date(Date.now())};
+		//insert message to db
+		MongoClient.connect(uri, function(err, db) {
+			var dbc = db.db("messenger");
+			dbc.collection("messages").insertOne(message, function(err, ress) {
+				db.close();
+			});
+		});//end inreg
+		
+		
+		for (i in socketIds)
+			if(socketIds[i][data.to] != null){
+				//send mesage trough socket to a specific user that is online
+				io.to(socketIds[i][data.to]).emit('message', data);
+				notifier.notify({//send notification for new nwssage
+					title: 'New message',
+					icon: __dirname+'/public/imagini/notify_icon.jpg',
+					message: data.msg
+				});
+			}
 	});
 });
-//socket
+//socket end
+
 app.get("*",(req, res)=>{
-	res.sendFile(__dirname + '\\public\\html\\404.html');
+	res.sendFile(__dirname + '/public/html/404.html');
 });
 
 http.listen(80, () => {
