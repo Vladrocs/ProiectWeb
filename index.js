@@ -112,7 +112,7 @@ app.get("/log_out",(req, res)=>{
 	return res.redirect("/");
 });
 
-app.get("/get_users",(req, res)=>{
+app.get("/get_users",(req, res)=>{//get users based on a search string
 	MongoClient.connect(uri, function(err, db) {
 		var dbc = db.db("messenger");
 		ss=req.query.searchString;
@@ -123,7 +123,30 @@ app.get("/get_users",(req, res)=>{
 				list.push(result[i].username);
 			res.send(list);
 		});
-		
+		db.close();
+	});
+});
+
+app.get("/get_recent_users",(req, res)=>{//get users based on a session
+	//-----------------in progresssssssssssssss-----------------------------------------------
+	//prb se repeta
+	MongoClient.connect(uri, function(err, db) {
+		var dbc = db.db("messenger");
+		dbc.collection("messages").find().sort({"date":1}).toArray(function(err, result) {
+			list=[];
+			for (i in result){
+				if(result[i].from==req.session.username && !(result[i].to in list)){
+					list.push(result[i].to);
+					console.log(result[i]);
+				}
+				if(result[i].to==req.session.username && !(result[i].from in list)){
+					list.push(result[i].from);
+					//console.log(result[i]);
+				}
+			}
+			console.log(list);
+			res.send(list);
+		});
 		db.close();
 	});
 });
@@ -164,7 +187,7 @@ io.on('connection', function(socket){
 	//console.log("am primit: "+socket.id)//-----------------------------in progres
 	socket.on('set_online',(data)=>{//se user online
 		socketIds.push({[data.username] : socket.id});
-		console.log(socketIds);
+		//	.log(socketIds);
 	});
 	socket.on('message', function(data){//when receive message on socket
 		var message={"from": data.from, "to": data.to, "msg": data.msg, "date": new Date(Date.now())};

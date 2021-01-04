@@ -13,6 +13,18 @@ $( document ).ready(function() {
         return username;
     }
 
+    function poulate_ch_list_at_startup(){
+        $.ajax({//make ajax request
+            type: "GET",
+            'async':false,
+            url: "/get_recent_users",
+            dataType: 'text',
+            success:(res)=>{
+                console.log(res);
+            }
+        });
+    }
+
     var socket = io.connect("http://localhost:80");//192.168.1.242
     //global vars
     var curent_chat_user="";
@@ -132,5 +144,5 @@ $( document ).ready(function() {
         }//else 
         //    console.log("nu inserez");
         });
-    console.log(get_username());
+    //poulate_ch_list_at_startup();
 });
