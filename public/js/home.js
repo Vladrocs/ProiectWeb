@@ -107,6 +107,42 @@ $( document ).ready(function() {
             });
         //console.log(e.key+"\n"+e.keyCode);
     });
+    function uploadFile() {
+        var img = document.querySelector('[type=file]').files[0];
+        var formData = new FormData();
+        formData.append("filetoupload", img);
+        //console.log(img);
+        $.ajax({
+           url: "/upload_profile_pic",
+           type: "get",
+           data: formData,
+           processData: false,
+           contentType: false,
+           success: function(response) {
+               console.log(response);
+            //$(".rofile_image").attr(src,"path on server")
+           },
+           error: function(jqXHR, textStatus, errorMessage) {
+               console.log(errorMessage); // Optional
+           }
+        });
+    }
+    //upload image
+    $(document).on("click","#profile_image", function() {
+        if(document.querySelector('[type=file]').files.length!=0){
+            console.log(document.querySelector('[type=file]').files);
+            uploadFile();
+            $(".centered").remove();
+            //pune img
+        }else{
+            $(".upp_image").click();
+            $(".formm").append('<labe class="centered">Apply</label>');
+            console.log(document.querySelector('[type=file]').files);
+         }
+    });
+    $(document).on("click",".centered", function() {
+        $("#profile_image").click();
+    });
 
     $(document).on('click', '.chat_people',function(e){//on select people to chat
         //console.log($(this).children(".name").text());

@@ -8,6 +8,11 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 const mongo = require("mongodb");
 const notifier = require('node-notifier');
+//var formidable = require('formidable');
+
+var multer  = require('multer');
+var upload = multer({ dest: 'public/profile_pics/' })
+
 const { Console } = require('console');
 
 var MongoClient = mongo.MongoClient;
@@ -137,8 +142,6 @@ function removeItemOnce(arr, value) {
   }
 
 app.get("/get_recent_users",(req, res)=>{//get users based on a session
-	
-	
 	MongoClient.connect(uri, function(err, db) {
 		var username=req.session.username;
 		var dbc = db.db("messenger");
@@ -151,7 +154,7 @@ app.get("/get_recent_users",(req, res)=>{//get users based on a session
 				list.push(result[i].to);
 				list.push(result[i].from);
 			}
-			console.log(Array.from(new Set(list)));
+			//console.log(Array.from(new Set(list)));
 			res.send(removeItemOnce(Array.from(new Set(list)),""));
 		});
 		db.close();
@@ -238,6 +241,27 @@ io.on('connection', function(socket){
 	});
 });
 //socket end
+
+//upload profile picture
+app.get("/upload_profile_pic", upload.single('filetoupload'),(req,res)=>{
+	console.log(req.file);
+	console.log(req.files);
+	/*var upload_path = "/public/profile_pics/";
+	var form = new formidable.IncomingForm();
+	form.parse(req, function (err, fields, files) {
+		// oldpath : temporary folder to which file is saved to
+		//console.log(form);
+		//console.log(field);
+		var oldpath = files.filetoupload.path;
+		var newpath = upload_path + req.session.username;
+		// copy the file to a new location
+		fs.rename(oldpath, newpath, function (err) {
+			if (err) throw err;
+			// you may respond with another html page
+			res.write('File uploaded and moved!');
+		});
+	});*/
+});
 
 app.get("*",(req, res)=>{
 	res.sendFile(__dirname + '/public/html/404.html');
