@@ -166,8 +166,10 @@ app.get("/get_last_message",(req, res)=>{//get users based on a session
 		last="";
 		var search_obi={"$or": [{"from": usr , "to":  username},{"to": usr , "from":  username}]};
 		dbc.collection("messages").find(search_obi).sort({"date":1}).toArray(function(err, result){//
-			console.log(result[result.length-1]);
-			last=result[result.length-1].msg;
+			if(null==result[result.length-1])
+				last="Last message";
+			else
+				last=result[result.length-1].msg;
 			res.send(last);
 		});
 		db.close();
