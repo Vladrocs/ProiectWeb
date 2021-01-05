@@ -1,7 +1,6 @@
 $( document ).ready(function() {
     function get_username(){
         var username="";
-        var curent_user="";
         $.ajax({//make ajax request
             type: "GET",
             'async':false,
@@ -15,6 +14,8 @@ $( document ).ready(function() {
     }
 
     function poulate_ch_list_at_startup(){
+        //set username
+       
         $.ajax({//make ajax request
             type: "GET",
             'async':false,
@@ -27,10 +28,13 @@ $( document ).ready(function() {
                     $(".peoples_list").append(slot);
                 }
                 first_chat=document.getElementsByClassName("chat_people")[0];
-                if(window.innerWidth>600)
+                if(first_chat!= null && window.innerWidth>600)
                     first_chat.click();
             }
         });
+        if(window.innerWidth>600)
+            $(".username").html(get_username());           
+
     }
 
     var socket = io.connect("http://localhost:80");//192.168.1.242
@@ -89,6 +93,10 @@ $( document ).ready(function() {
         //console.log($(this).children(".name").text());
         curent_chat_user=$(this).children(".name").text();
         curent_user=$(this);
+        if(window.innerWidth<600){
+            console.log(curent_chat_user);
+            $(".username").html(curent_chat_user);
+        }
         $(".chat_people").css("background-color", "#00000059");
         $(this).css("background-color", "navajowhite");
         //redo ch_area
@@ -137,6 +145,10 @@ $( document ).ready(function() {
             });*/
     }
 
+    //set profile picture
+   /* $(document).on("click",".profile_image",()=>{
+
+    })*/
 
 
 

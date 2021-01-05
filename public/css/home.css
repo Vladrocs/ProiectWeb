@@ -118,6 +118,7 @@ img#bg-image {
 	position: absolute;
 }
 .name{
+	width: 65%;
 	margin-left: 72px;
 }
 .last_message{
@@ -146,7 +147,7 @@ img#bg-image {
 }
 
 .name{
-	width: 21%;
+	width: 65%;
 	text-overflow: ellipsis;
 	color: white;
 	overflow: hidden;
@@ -154,7 +155,7 @@ img#bg-image {
 }
 
 .last_message{
-	width: 21%;
+	width: 60%;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
@@ -300,7 +301,6 @@ img#bg-image {
 		position: absolute;
 		z-index: 10;*/
 		width: 20px;
-		display: inline-block;
 		position: relative;
 		float:left;
 	}

@@ -137,20 +137,21 @@ function removeItemOnce(arr, value) {
   }
 
 app.get("/get_recent_users",(req, res)=>{//get users based on a session
-	var username=req.session.username;
-	console.log(username);
+	
+	
 	MongoClient.connect(uri, function(err, db) {
+		var username=req.session.username;
 		var dbc = db.db("messenger");
 		list=[];
-		console.log(username);
 		var search_obi={"$or": [{"from": { "$eq": username }},{"to":{"$eq": username}}]};
-		console.log(search_obi);
+		//console.log(search_obi);
 		//dbc.collection("messages").distinct("to")
 		dbc.collection("messages").find(search_obi).sort({"date":-1}).toArray(function(err, result){//
 			for (i in result){
 				list.push(result[i].to);
 				list.push(result[i].from);
 			}
+			console.log(Array.from(new Set(list)));
 			res.send(removeItemOnce(Array.from(new Set(list)),""));
 		});
 		db.close();
