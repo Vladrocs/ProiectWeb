@@ -158,6 +158,22 @@ app.get("/get_recent_users",(req, res)=>{//get users based on a session
 	});
 });
 
+app.get("/get_last_message",(req, res)=>{//get users based on a session
+	MongoClient.connect(uri, function(err, db) {
+		var usr=req.query.usr;
+		var username=req.session.username;
+		var dbc = db.db("messenger");
+		last="";
+		var search_obi={"$or": [{"from": usr , "to":  username},{"to": usr , "from":  username}]};
+		dbc.collection("messages").find(search_obi).sort({"date":1}).toArray(function(err, result){//
+			console.log(result[result.length-1]);
+			last=result[result.length-1].msg;
+			res.send(last);
+		});
+		db.close();
+	});
+});
+
 app.get("/send_message",(req, res)=>{
 var message={"from": req.session.username, "to": req.query.to, "msg": req.query.message, "date": new Date(Date.now())};
 //insert message to db

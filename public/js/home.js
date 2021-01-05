@@ -24,8 +24,18 @@ $( document ).ready(function() {
             success:(res)=>{
                 console.log(res);
                 for(i in res){
-                    slot='<div class="chat_people"><img class="prof_pic" src="../imagini/background.jpg"><p class="name">'+res[i]+'</p><p class="last_message">Last message</p></div>';
-                    $(".peoples_list").append(slot);
+                    $.ajax({
+                        type: "GET",
+                        'async':false,
+                        url: "/get_last_message",
+                        dataType: 'text',
+                        data:{usr: res[i]},
+                        success:(res1)=>{
+                            slot='<div class="chat_people"><img class="prof_pic" src="../imagini/background.jpg"><p class="name">'+res[i]+'</p><p class="last_message">'+res1+'</p></div>';
+                            $(".peoples_list").append(slot);
+                        }
+                    });
+                    
                 }
                 first_chat=document.getElementsByClassName("chat_people")[0];
                 if(first_chat!= null && window.innerWidth>600)
@@ -81,8 +91,17 @@ $( document ).ready(function() {
                 success:(res)=>{
                     $(".peoples_list").html("");//delete previous list
                     for(i in res){
-                        slot='<div class="chat_people"><img class="prof_pic" src="../imagini/background.jpg"><p class="name">'+res[i]+'</p><p class="last_message">Last message</p></div>';
-                        $(".peoples_list").append(slot);
+                        $.ajax({
+                            type: "GET",
+                            'async':false,
+                            url: "/get_last_message",
+                            dataType: 'text',
+                            data:{usr: res[i]},
+                            success:(res1)=>{
+                                slot='<div class="chat_people"><img class="prof_pic" src="../imagini/background.jpg"><p class="name">'+res[i]+'</p><p class="last_message">'+res1+'</p></div>';
+                                $(".peoples_list").append(slot);
+                            }
+                        });
                     }
                 }
             });
